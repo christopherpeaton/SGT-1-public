@@ -12,9 +12,7 @@
  * stats (mean, median, mode, range) reference mo-math
  * @type {Array}
  *try to impliment ajax (reference old code) need button load to database
-**/
-
-
+ **/
 
 
 /**
@@ -52,6 +50,12 @@ $(document).ready(function () {
 /**
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
  */
+function clearForm() {
+$('.clear').click(function() {
+    $('input:text').val('');
+});
+    console.log('form reset');
+}
 
 /**
  * addStudent - creates a student objects based on input fields in the form and adds the object to global student array
@@ -91,6 +95,11 @@ function addStudent() {
  * appends the button to the student row
  * appends the student row to the table body
  *
+ * selects class deleteStudent, adds click function that takes in parameter student
+ * console.logs here
+ * selects this, which is the click, selects the parent (table row for that student)
+ * removes that table row
+ * runs deleteStudent function
  *
  */
 function addStudentToDOM(student) {
@@ -102,7 +111,7 @@ function addStudentToDOM(student) {
     var studentRow = $('<tr>').append(name).append(course).append(grade).append(deleteButton);
     $('tbody').append(studentRow);
 
-    $('.deleteStudent').click(function(student){
+    $('.deleteStudent').click(function (student) {
         console.log('here');
         $(this).parent().remove();
         deleteStudent(student)
@@ -115,6 +124,15 @@ function addStudentToDOM(student) {
 /**
  * calculateAverage - loop through the global student array and calculate average grade and return that value
  * @returns {number}
+ *
+ * within the calculateAverage function we:
+ * create local variable total, set it to 0
+ * run for loop through studentArray
+ * select grade of student using studentArray[i].grade which is a string, turn it into an integer w parseInt and assign it to total
+ * divide total by number of students in array and assign it to global var avg
+ * console.log the avg
+ * run displayAvg function
+ *
  */
 function calculateAverage() {
     var total = 0;
@@ -127,6 +145,10 @@ function calculateAverage() {
     console.log(avg);
     displayAvg();
 }
+
+/**
+ * displayAvg function selects class avgGrade and displays the html of global variable avg
+ */
 
 function displayAvg() {
     $('.avgGrade').html(avg);
@@ -150,12 +172,20 @@ function displayAvg() {
 
 /**
  * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
+ * deleteStudent function takes in student as a parameter
+ * runs for loop through studentArray
+ * then runs conditional statement which checks to see if student.id is equal value and equal type to studentArray[i].id
+ * splices item at index i and removes it from array
+ * console.logs 'student deleted'
+ * console.logs 'student arr is now: ', and the remaining studentArray
+ *
+ *
  */
 
-function deleteStudent(student){
+function deleteStudent(student) {
     for (var i = 0; i < studentArray.length; i++) {
-        if (student.id === studentArray[i].id){
-            studentArray.splice(1,i);
+        if (student.id === studentArray[i].id) {
+            studentArray.splice(1, i);
         }
     }
     console.log('student deleted');
