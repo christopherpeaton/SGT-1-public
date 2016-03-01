@@ -7,7 +7,7 @@
  * form validation (if grade is greater than 100, alert, empty strings for name or course alert.)
  * read up on ajax/firebase
  *
- * clear form button
+
  * make it look good (bootstrap)
  * stats (mean, median, mode, range) reference mo-math
  * @type {Array}
@@ -21,6 +21,9 @@
 var studentArray = [];
 var avg = 0;
 var acc = 0;
+var nameValidated = false;
+var courseValidated = false;
+var gradeValidated = false;
 
 /**
  * The DOM cannot be manipulated safely until the document is ready.  Code inside this ready function will only run once the
@@ -29,7 +32,6 @@ var acc = 0;
 $(document).ready(function () {
     calculateAverage();
     console.log('doc loaded');
-
 });
 
 
@@ -51,9 +53,7 @@ $(document).ready(function () {
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
  */
 function clearForm() {
-    $('.clear').click(function() {
-        $('#inner-editor').val('');
-    });
+    $('.clear').val('');
     console.log('form reset');
 }
 
@@ -73,6 +73,7 @@ function clearForm() {
 function addStudent() {
 
     var student = {};
+    validateFormInputs();
     student['name'] = $('#studentName').val();
     student['grade'] = $('#studentGrade').val();
     student['course'] = $('#courseName').val();
@@ -83,6 +84,40 @@ function addStudent() {
     addStudentToDOM(student);
     calculateAverage();
 }
+
+function validateFormInputs() {
+    if (nameValidated == false || courseValidated == false || courseValidated == false) {
+        alert('Fill in blank input');
+    } else {
+        addStudent();
+    }
+
+}
+
+function validateName() {
+    if (student.name.val === '') {
+        alert('Please input name');
+    } else {
+        nameValidated = true;
+    }
+}
+
+function validateCourse() {
+    if (student.course.val === '') {
+        alert('Please input course');
+    } else {
+        courseValidated = true;
+    }
+}
+
+function validateGrade() {
+    if (student.grade.val === '') {
+        alert('Please input grade');
+    } else {
+        gradeValidated = true;
+    }
+}
+
 
 
 /**
@@ -106,9 +141,11 @@ function addStudentToDOM(student) {
     var name = $('<td>').html(student.name);
     var grade = $('<td>').html(student.grade);
     var course = $('<td>').html(student.course);
-    var button = $('<button>').html('delete').addClass('deleteStudent');
-    var deleteButton = $('<td>').append(button);
-    var studentRow = $('<tr>').append(name).append(course).append(grade).append(deleteButton);
+    var mButton = $('<button>').html('modify').addClass('modifyStudent')
+    var modifyStudent = $('<td>').append(mButton);
+    var dButton = $('<button>').html('delete').addClass('deleteStudent');
+    var deleteButton = $('<td>').append(dButton);
+    var studentRow = $('<tr>').append(name).append(course).append(grade).append(modifyStudent).append(deleteButton);
     $('tbody').append(studentRow);
 
     $('.deleteStudent').click(function (student) {
@@ -138,7 +175,7 @@ function calculateAverage() {
     var total = 0;
     for (var i = 0; i < studentArray.length; i++) {
         total += parseInt(studentArray[i].grade);
-    };
+    }
 
     avg = total / studentArray.length;
 
@@ -152,7 +189,6 @@ function calculateAverage() {
 
 function displayAvg() {
     $('.avgGrade').html(avg);
-
 }
 
 
@@ -160,9 +196,18 @@ function displayAvg() {
  * updateData - centralized function to update the average and call student list update
  */
 
+function updateData() {
+    for (var i = 0; i < studentArray.length; i++) {
+        addStudentToDOM();
+        console.log('updated');
+    }
+    calculateAverage();
+}
 /**
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
+
+
 
 /**
  * addStudentToDom - take in a student object, create html elements from the values and then append the elements

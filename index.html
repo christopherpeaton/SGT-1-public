@@ -27,9 +27,9 @@
             <span>
                 <span class="glyphicon glyphicon-user-alt"></span>
             </span>
-
+            <form name="myForm" action="demo_form.asp" onsubmit="return validateFormInputs()" method="post">
             <input type="text" class="formInput clear" name="studentName" id="studentName" placeholder="Student Name">
-
+            </form>
         </div>
         <div class="">
             <span class="">
@@ -43,13 +43,13 @@
             <span class="">
                 <span class="glyphicon glyphicon-education"></span>
             </span>
-            <<<<<<< HEAD
             <input type="text" class="formInput clear" name="studentGrade" id="studentGrade"
 
                    placeholder="Student Grade">
         </div>
         <button type="button" class="btn btn-success" onclick="addStudent()">Add</button>
         <button type="button" class="btn btn-default cancel" onclick="clearForm()">Cancel</button>
+        <button type="button" class="btn btn-default" onclick="updateData()">Update</button>
     </div>
     <div class="student-list-container">
         <table class="table student-list">
