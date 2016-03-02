@@ -91,7 +91,7 @@ function addStudent() {
 function validateFormInputs(student) {
     if (validateName(student) || validateCourse(student) || validateGrade(student)) {
         //runs modal
-        $('#myModal').on // doing bootbox.alert to get the modal to work
+        $('#myModal').modal('show') // doing bootbox.alert to get the modal to work
         return true
     } else {
         return false
