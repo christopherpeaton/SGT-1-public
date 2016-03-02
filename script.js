@@ -21,9 +21,7 @@
 var studentArray = [];
 var avg = 0;
 var acc = 0;
-var nameValidated = false;
-var courseValidated = false;
-var gradeValidated = false;
+
 
 /**
  * The DOM cannot be manipulated safely until the document is ready.  Code inside this ready function will only run once the
@@ -73,48 +71,53 @@ function clearForm() {
 function addStudent() {
 
     var student = {};
-    validateFormInputs();
     student['name'] = $('#studentName').val();
     student['grade'] = $('#studentGrade').val();
     student['course'] = $('#courseName').val();
     student['id'] = acc;
     acc++;
-    studentArray.push(student);
-    console.log('studentArray is ', studentArray);
-    addStudentToDOM(student);
-    calculateAverage();
-}
+    if (validateFormInputs(student)) {
+    } else {
+        studentArray.push(student);
+        console.log('studentArray is ', studentArray);
+        addStudentToDOM(student);
+        calculateAverage();
+    }
 
-function validateFormInputs() {
-    if (nameValidated == false || courseValidated == false || courseValidated == false) {
+}
+//checks subfunctions
+function validateFormInputs(student) {
+    if (validateName(student) || validateCourse(student) || validateGrade(student)) {
         alert('Fill in blank input');
+        return true
     } else {
-        addStudent();
-    }
-
-}
-
-function validateName() {
-    if (student.name.val === '') {
-        alert('Please input name');
-    } else {
-        nameValidated = true;
+        return false
     }
 }
 
-function validateCourse() {
-    if (student.course.val === '') {
-        alert('Please input course');
+//checks for blank student name input
+function validateName(student) {
+    if (student.name === '') {
+        return true;
     } else {
-        courseValidated = true;
+        return false;
     }
 }
 
-function validateGrade() {
-    if (student.grade.val === '') {
-        alert('Please input grade');
+//checks for blank student course input
+function validateCourse(student) {
+    if (student.course === '') {
+        return true;
     } else {
-        gradeValidated = true;
+        return false;
+    }
+}
+// checks for blank student grade input
+function validateGrade(student) {
+    if (student.grade === '' || student.grade ===) {
+        return true;
+    } else {
+        return false;
     }
 }
 
