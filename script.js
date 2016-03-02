@@ -2,9 +2,11 @@
  * Created by christophereaton on 2/19/16.
  */
 /**
+ * change alert to modal
+ *
+ *
  * add update button
  * html to reflect update button
- * form validation (if grade is greater than 100, alert, empty strings for name or course alert.)
  * read up on ajax/firebase
  *
 
@@ -88,7 +90,8 @@ function addStudent() {
 //checks subfunctions
 function validateFormInputs(student) {
     if (validateName(student) || validateCourse(student) || validateGrade(student)) {
-        alert('Fill in blank input');
+        //runs modal
+        $('#myModal').on // doing bootbox.alert to get the modal to work
         return true
     } else {
         return false
@@ -114,13 +117,13 @@ function validateCourse(student) {
 }
 // checks for blank student grade input
 function validateGrade(student) {
-    if (student.grade === '' || student.grade ===) {
-        return true;
-    } else {
+    var grade = parseFloat(student.grade)
+    if (grade >= 0 && grade <= 100) {
         return false;
+    } else {
+        return true;
     }
 }
-
 
 
 /**

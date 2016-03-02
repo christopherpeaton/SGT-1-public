@@ -20,9 +20,9 @@
             <small class="text-right">Grade Average : <span class="avgGrade">0</span></small>
         </h3>
     </div>
+
     <div class="pull-right student-add-form">
         <h4>Add Student</h4>
-
         <div>
             <span>
                 <span class="glyphicon glyphicon-user-alt"></span>
@@ -35,7 +35,6 @@
             <span class="">
             <span class="glyphicon glyphicon-list-alt"></span>
             </span>
-
             <input type="text" class="formInput clear" name="course" id="courseName"
                    placeholder="Student Course">
         </div>
@@ -51,6 +50,25 @@
         <button type="button" class="btn btn-default cancel" onclick="clearForm()">Cancel</button>
         <button type="button" class="btn btn-default" onclick="updateData()">Update</button>
     </div>
+    <!-- modal -->
+    <div id='mymodal' class='modal fade' role="dialog" data-target="#myModal">
+        <div class="modal-dialog">
+
+            <!-- modal dialog -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Please fill all fields.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="student-list-container">
         <table class="table student-list">
             <thead>
