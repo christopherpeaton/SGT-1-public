@@ -2,9 +2,6 @@
  * Created by christophereaton on 2/19/16.
  */
 /**
- * change alert to modal
- *
- *
  * add update button
  * html to reflect update button
  * read up on ajax/firebase
@@ -30,29 +27,17 @@ var acc = 0;
  * document is ready.
  */
 $(document).ready(function () {
-    calculateAverage();
+    calculateAverage(); // calculates average grade of all students combined
     console.log('doc loaded');
 });
 
 
-/**
- * student_array - global array to hold student objects
- * @type {Array}
- */
 
-/**
- * inputIds - id's of the elements that are used to add students
- * @type {string[]}
- */
-
-/**
- * addClicked - Event Handler when user clicks the add button
- */
 
 /**
  * cancelClicked - Event Handler when user clicks the cancel button, should clear out student form
  */
-function clearForm() {
+function clearForm() { // when cancel button is clicked, clears name,course and grade fields
     $('.clear').val('');
     console.log('form reset');
 }
@@ -73,25 +58,25 @@ function clearForm() {
 function addStudent() {
 
     var student = {};
-    student['name'] = $('#studentName').val();
-    student['grade'] = $('#studentGrade').val();
-    student['course'] = $('#courseName').val();
-    student['id'] = acc;
-    acc++;
-    if (validateFormInputs(student)) {
+    student['name'] = $('#studentName').val(); // selects value of input from id studentName and assigns it to student.name
+    student['grade'] = $('#studentGrade').val(); // selects value of input from id studentGrade and assigns it to student.grade
+    student['course'] = $('#courseName').val();  // selects value of input from id courseName and assigns it to student.course
+    student['id'] = acc;  // this accumulator variable assigns a number to student.id
+    acc++;  // increases with every student
+    if (validateFormInputs(student)) { // checks to see if validateFormInputs with parameter of student is true or false
     } else {
-        studentArray.push(student);
+        studentArray.push(student);  // if false then push new student to the student array
         console.log('studentArray is ', studentArray);
-        addStudentToDOM(student);
-        calculateAverage();
+        addStudentToDOM(student);  // add student to the DOM
+        calculateAverage();  // run calculate average function
     }
-
 }
-//checks subfunctions
+
+//checks sub functions
 function validateFormInputs(student) {
     if (validateName(student) || validateCourse(student) || validateGrade(student)) {
-        //runs modal
-        $('#myModal').modal('show') // doing bootbox.alert to get the modal to work
+        //runs modal if true
+        $('#validateModal').modal('show');
         return true
     } else {
         return false
@@ -125,10 +110,10 @@ function validateGrade(student) {
     }
 }
 
-
 /**
- *
- * @param student
+* addStudentToDom - take in a student object, create html elements from the values and then append the elements
+* into the .student_list tbody
+* @param student
  *
  * the addStudentToDOM function takes in the parameter of student
  * dynamically creates the grade table, delete button
@@ -143,31 +128,48 @@ function validateGrade(student) {
  * runs deleteStudent function
  *
  */
-function addStudentToDOM(student) {
+function addStudentToDOM(student) {  // dynamically creates table data, w jquery, for student name, grade, course
     var name = $('<td>').html(student.name);
     var grade = $('<td>').html(student.grade);
     var course = $('<td>').html(student.course);
-    var mButton = $('<button>').html('modify').addClass('modifyStudent')
-    var modifyStudent = $('<td>').append(mButton);
-    var dButton = $('<button>').html('delete').addClass('deleteStudent');
-    var deleteButton = $('<td>').append(dButton);
-    var studentRow = $('<tr>').append(name).append(course).append(grade).append(modifyStudent).append(deleteButton);
-    $('tbody').append(studentRow);
+    var mButton = $('<button>').html('modify').addClass('modifyStudent')  // dynamically creates modify button
+    var modifyStudent = $('<td>').append(mButton);  //appends button to the table
+    var dButton = $('<button>').html('delete').addClass('deleteStudent');  //dynamically creates delete student button
+    var deleteButton = $('<td>').append(dButton);  // appends button to table
+    var studentRow = $('<tr>').append(name).append(course).append(grade).append(modifyStudent).append(deleteButton);  // appends name, course, grade, modify student and delete button to student row
+    $('tbody').append(studentRow); // appends studentRow to the table body
 
-    $('.deleteStudent').click(function (student) {
+    $('.deleteStudent').click(function (student) { //using jquery, selects class deleteStudent after the delete button is clicked, then runs a function with parameter of student
         console.log('here');
-        $(this).parent().remove();
-        deleteStudent(student)
+        $(this).parent().remove();  // using jquery, selects id deleteStudent, selects the parent of id student and removes the parent
+        deleteStudent(student) // runs deleteStudent function, taking in the parameter of student
     })
 }
-/**
- * clearAddStudentForm - clears out the form values based on inputIds variable
- */
+
 
 /**
- * calculateAverage - loop through the global student array and calculate average grade and return that value
- * @returns {number}
- *
+* deleteStudent function takes in student as a parameter
+* runs for loop through studentArray
+* then runs conditional statement which checks to see if student.id is equal value and equal type to the id of studentArray at index i
+* splices item at index i and removes it from array
+* console.logs 'student deleted'
+* console.logs 'student arr is now: ', and the remaining studentArray
+*/
+
+
+function deleteStudent(student) {
+    for (var i = 0; i < studentArray.length; i++) {  //runs through student array
+        if (student.id === studentArray[i].id) {  // checks if student.id is of equal value and equal type to the id of studentArray at index i
+            studentArray.splice(1, i);  // splices (removes) one item at index i
+        }
+    }
+    console.log('student deleted');
+    console.log('student arr is now: ', studentArray);
+}
+
+
+
+/**
  * within the calculateAverage function we:
  * create local variable total, set it to 0
  * run for loop through studentArray
@@ -177,34 +179,41 @@ function addStudentToDOM(student) {
  * run displayAvg function
  *
  */
-function calculateAverage() {
-    var total = 0;
-    for (var i = 0; i < studentArray.length; i++) {
-        total += parseInt(studentArray[i].grade);
+function calculateAverage() { // calculateAverage function
+    var total = 0;  // creates local variable total and set it equal to 0
+    for (var i = 0; i < studentArray.length; i++) { // loops through length the studentArray, going to the next student up each loop
+        total += parseInt(studentArray[i].grade);  // takes the string at index studentArray[i].grade and returns a number with parseInt and assigns it to total
     }
 
-    avg = total / studentArray.length;
+    avg = total / studentArray.length; // takes value of total and divides by the number of students in the student array, then assigns them to global variable avg
 
     console.log(avg);
-    displayAvg();
+    displayAvg(); // runs displayAvg function
 }
+
+
+
 
 /**
  * displayAvg function selects class avgGrade and displays the html of global variable avg
  */
 
 function displayAvg() {
-    $('.avgGrade').html(avg);
+    $('.avgGrade').html(avg); // selects id avgGrade using jquery and takes the value of global variable avg and displays it as html
 }
+
+
 
 
 /**
  * updateData - centralized function to update the average and call student list update
  */
 
+
+
 function updateData() {
-    for (var i = 0; i < studentArray.length; i++) {
-        addStudentToDOM();
+    for (var i = 0; i < studentArray.length; i++) { //
+        addStudent();
         console.log('updated');
     }
     calculateAverage();
@@ -213,35 +222,6 @@ function updateData() {
  * updateStudentList - loops through global student array and appends each objects data into the student-list-container > list-body
  */
 
-
-
-/**
- * addStudentToDom - take in a student object, create html elements from the values and then append the elements
- * into the .student_list tbody
- * @param studentObj
- */
-
-/**
- * reset - resets the application to initial state. Global variables reset, DOM get reset to initial load state
- * deleteStudent function takes in student as a parameter
- * runs for loop through studentArray
- * then runs conditional statement which checks to see if student.id is equal value and equal type to studentArray[i].id
- * splices item at index i and removes it from array
- * console.logs 'student deleted'
- * console.logs 'student arr is now: ', and the remaining studentArray
- *
- *
- */
-
-function deleteStudent(student) {
-    for (var i = 0; i < studentArray.length; i++) {
-        if (student.id === studentArray[i].id) {
-            studentArray.splice(1, i);
-        }
-    }
-    console.log('student deleted');
-    console.log('student arr is now: ', studentArray);
-}
 /**
  * Listen for the document to load and reset the data to the initial state
  */
