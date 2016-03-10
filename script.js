@@ -10,20 +10,17 @@
  * make it look good (bootstrap)
  * stats (mean, median, mode, range) reference mo-math
  * @type {Array}
- *try to impliment ajax (reference old code) need button load to database
+ *try to implement ajax (reference old code) need button load to database
  **/
 
 
 var studentArray = [];
 var avg = 0;
 var acc = 0;
+var fireRef = new Firebase('https://sgt-1-public.firebaseio.com/') //Firebase reference
 
 
-/**
- * The DOM cannot be manipulated safely until the document is ready.  Code inside this ready function will only run once the
- * document is ready.
- */
-$(document).ready(function () {
+$(document).ready(function () { // uses jquery to find document, and when the document is ready/loaded will run the function
     calculateAverage(); // calculates average grade of all students combined
     console.log('doc loaded');
 });
@@ -34,15 +31,6 @@ function clearForm() { // when cancel button is clicked, clears name,course and 
     console.log('form reset');
 }
 
-/**
- * the addStudent function does many things:
- * using jquery, locates input info by class
- * creates unique id per student
- * takes name, grade, course, and id and creates a student object
- * pushes student object to studentArray
- * runs addStudentToDOM function, taking in student as a parameter
- * runs calculateAverage function
- */
 function addStudent() {
 
     var student = {};
@@ -56,6 +44,7 @@ function addStudent() {
         studentArray.push(student);  // if false then push new student to the student array
         console.log('studentArray is ', studentArray);
         addStudentToDOM(student);  // add student to the DOM
+        fireRef.push({name: name, grade: grade, course: course}); // pushes new student information to database
         calculateAverage();  // run calculate average function
     }
 }
@@ -104,56 +93,30 @@ function validateGrade(student) {
 }
 
 
-/**
-* addStudentToDom - take in a student object, create html elements from the values and then append the elements
-* into the .student_list tbody
-* @param student
- *
- * the addStudentToDOM function takes in the parameter of student
- * dynamically creates the grade table, delete button
- * adds class of deleteStudent to button
- * appends the button to the student row
- * appends the student row to the table body
- *
- * selects class deleteStudent, adds click function that takes in parameter student
- * console.logs here
- * selects this, which is the click, selects the parent (table row for that student)
- * removes that table row
- * runs deleteStudent function
- */
 function addStudentToDOM(student) {  // dynamically creates table data, w jquery, for student name, grade, course
     var name = $('<td>').html(student.name);
     var grade = $('<td>').html(student.grade);
     var course = $('<td>').html(student.course);
-    var uButton = $('<button>').html('update').addClass('updateStudent'); // dynamically creates update button
-    var updateStudent = $('<td>').append(uButton);  //appends button to the table
+    var mButton = $('<button>').html('modify').addClass('modifyStudent'); // dynamically creates modify button
+    var modifyStudent = $('<td>').append(mButton);  //appends button to the table
     var dButton = $('<button>').html('delete').addClass('deleteStudent');  //dynamically creates delete student button
     var deleteButton = $('<td>').append(dButton);  // appends button to table
-    var studentRow = $('<tr>').append(name).append(course).append(grade).append(updateStudent).append(deleteButton);  // appends name, course, grade, update student and delete button to student row
+    var studentRow = $('<tr>').append(name).append(course).append(grade).append(modifyStudent).append(deleteButton);  // appends name, course, grade, modify student and delete button to student row
     $('tbody').append(studentRow); // appends studentRow to the table body
+    
 
     $('.deleteStudent').click(function (student) { //using jquery, selects class deleteStudent after the delete button is clicked, then runs a function with parameter of student
-        console.log('here');
+        console.log('deleted');
         $(this).parent().remove();  // using jquery, selects id deleteStudent, selects the parent of id student and removes the parent
         deleteStudent(student); // runs deleteStudent function, taking in the parameter of student
     });
 }
 
 
-/**
-* deleteStudent function takes in student as a parameter
-* runs for loop through studentArray
-* then runs conditional statement which checks to see if student.id is equal value and equal type to the id of studentArray at index i
-* splices item at index i and removes it from array
-* console.logs 'student deleted'
-* console.logs 'student arr is now: ', and the remaining studentArray
-*/
-
-
 function deleteStudent(student) {
     for (var i = 0; i < studentArray.length; i++) {  //runs through student array
         if (student.id === studentArray[i].id) {  // checks if student.id is of equal value and equal type to the id of studentArray at index i
-            studentArray.splice(1, i);  // splices (removes) one item at index i
+            studentArray.splice(i, 1);  // splices (removes) one item at index i
         }
     }
     console.log('student deleted');
@@ -161,16 +124,6 @@ function deleteStudent(student) {
 }
 
 
-/**
- * within the calculateAverage function we:
- * create local variable total, set it to 0
- * run for loop through studentArray
- * select grade of student using studentArray[i].grade which is a string, turn it into an integer w parseInt and assign it to total
- * divide total by number of students in array and assign it to global var avg
- * console.log the avg
- * run displayAvg function
- *
- */
 function calculateAverage() { // calculateAverage function
     var total = 0;  // creates local variable total and set it equal to 0
     for (var i = 0; i < studentArray.length; i++) { // loops through length the studentArray, going to the next student up each loop
@@ -182,17 +135,11 @@ function calculateAverage() { // calculateAverage function
 }
 
 
-/**
- * displayAvg function selects class avgGrade and displays the html of global variable avg
- */
 function displayAvg() {
     $('.avgGrade').html(avg); // selects id avgGrade using jquery and takes the value of global variable avg and displays it as html
 }
 
 
-/**
- * updateData - centralized function to update the average and call student list update
- */
 function updateData() {
     for (var i = 0; i < studentArray.length; i++) { //
         calculateAverage();
@@ -200,6 +147,14 @@ function updateData() {
     }
     displayAvg();
 }
+
+
+
+
+function editStudent(student) {
+
+}
+
 
 
 /**
