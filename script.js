@@ -17,11 +17,14 @@
 var studentArray = [];
 var avg = 0;
 var acc = 0;
-var fireRef = new Firebase('https://sgt-1-public.firebaseio.com/') //Firebase reference
+var baseUrl = 'https://sgt-1-public.firebaseio.com/'; // base firebase url
+var fireRef = new Firebase(baseUrl); //Firebase reference
+var studentRef = new Firebase(baseUrl + 'students'); //firebase student branch ref.
 
 
 $(document).ready(function () { // uses jquery to find document, and when the document is ready/loaded will run the function
     calculateAverage(); // calculates average grade of all students combined
+    loadData();
     console.log('doc loaded');
 });
 
@@ -39,17 +42,18 @@ function addStudent() {
     student['course'] = $('#courseName').val();  // selects value of input from id courseName and assigns it to student.course
     student['id'] = acc;  // this accumulator variable assigns a number to student.id
     acc++;  // increases with every student
-    if (validateFormInputs(student)) { // checks to see if validateFormInputs with parameter of student is true or false
-    } else {
-        studentArray.push(student);  // if false then push new student to the student array
+    if (!validateFormInputs(student)) { // checks to see if validateFormInputs with parameter of student is true or false
         console.log('studentArray is ', studentArray);
-        addStudentToDOM(student);  // add student to the DOM
-        fireRef.push({name: name, grade: grade, course: course}); // pushes new student information to database
+        studentRef.push(student); // pushes new student information to database
+        studentRef.push();
+        studentRef.on('child_added', function(snapshot){
+            student['id'] = snapshot.key();
+            console.log('student id is now ', student['id']);
+        });
+        studentArray.push(student);  // if false then push new student to the student array
         calculateAverage();  // run calculate average function
     }
 }
-
-
 //checks sub functions
 function validateFormInputs(student) {
     if (validateName(student) || validateCourse(student) || validateGrade(student)) {
@@ -94,6 +98,7 @@ function validateGrade(student) {
 
 
 function addStudentToDOM(student) {  // dynamically creates table data, w jquery, for student name, grade, course
+    console.log('student passed into dom is ', student);
     var name = $('<td>').html(student.name);
     var grade = $('<td>').html(student.grade);
     var course = $('<td>').html(student.course);
@@ -105,23 +110,30 @@ function addStudentToDOM(student) {  // dynamically creates table data, w jquery
     $('tbody').append(studentRow); // appends studentRow to the table body
     
 
-    $('.deleteStudent').click(function (student) { //using jquery, selects class deleteStudent after the delete button is clicked, then runs a function with parameter of student
-        console.log('deleted');
-        $(this).parent().remove();  // using jquery, selects id deleteStudent, selects the parent of id student and removes the parent
+    $('.deleteStudent').click(function () { //using jquery, selects class deleteStudent after the delete button is clicked, then runs a function with parameter of student
+        console.log('student within delete event handler ', student);
+        $(this).parent().parent().remove();// using jquery, selects id deleteStudent, selects the parent of id student and removes the parent
         deleteStudent(student); // runs deleteStudent function, taking in the parameter of student
     });
 }
 
 
 function deleteStudent(student) {
+    console.log('student.id is', student.id);
+    var child = studentRef.child(student.id);
+    console.log('child within deleteStudent is ', child);
+    child.remove();
     for (var i = 0; i < studentArray.length; i++) {  //runs through student array
         if (student.id === studentArray[i].id) {  // checks if student.id is of equal value and equal type to the id of studentArray at index i
             studentArray.splice(i, 1);  // splices (removes) one item at index i
         }
     }
+
+    console.log('child is ', child);
     console.log('student deleted');
-    console.log('student arr is now: ', studentArray);
+    console.log('student arr is now ', studentArray);
 }
+
 
 
 function calculateAverage() { // calculateAverage function
@@ -148,7 +160,18 @@ function updateData() {
     displayAvg();
 }
 
+function loadData() {
+    studentRef.on('child_added', function(snapshot) {  // allows reflection of database
+        var child = snapshot.val(); // child is equal to the value of snapshot which is the database
+        child.id = snapshot.key(); // takes value of snapshot.key and saves it as child.id
+        var rawData = snapshot.val(); // rawData is equal to the value of snapshot
+        rawData.id = snapshot.key(); //  id in rawData is equal to the key in snapshot
+        studentArray.push(rawData);  // push value of snapshot to studentArray
+        addStudentToDOM(rawData);
+        console.log(studentArray);
+    });
 
+}
 
 
 function editStudent(student) {
