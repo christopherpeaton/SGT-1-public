@@ -2,15 +2,15 @@
  * Created by christophereaton on 2/19/16.
  */
 /**
- * add update button
- * html to reflect update button
- * read up on ajax/firebase
+ * do plunkr assosciated with lfz firebase slides
+ * impliment edit button
+ * understand bootstrap grid system
+ * learn how to make own grid sysem like bootstraps grid systemz
+ * build a full website for password generator
  *
-
+ *
  * make it look good (bootstrap)
- * stats (mean, median, mode, range) reference mo-math
  * @type {Array}
- *try to implement ajax (reference old code) need button load to database
  **/
 
 
@@ -43,14 +43,11 @@ function addStudent() {
     student['id'] = acc;  // this accumulator variable assigns a number to student.id
     acc++;  // increases with every student
     if (!validateFormInputs(student)) { // checks to see if validateFormInputs with parameter of student is true or false
-        console.log('studentArray is ', studentArray);
         studentRef.push(student); // pushes new student information to database
-        studentRef.push();
-        studentRef.on('child_added', function(snapshot){
-            student['id'] = snapshot.key();
-            console.log('student id is now ', student['id']);
+        studentRef.on('child_added', function(snapshot){ // database is listening for child added, runs anon function with parameter snapshot
+            student['id'] = snapshot.key(); //  set id of student equal to firebase id
         });
-        studentArray.push(student);  // if false then push new student to the student array
+        studentArray.push(student);  //  push new student to the student array
         calculateAverage();  // run calculate average function
     }
 }
@@ -99,9 +96,9 @@ function validateGrade(student) {
 
 function addStudentToDOM(student) {  // dynamically creates table data, w jquery, for student name, grade, course
     console.log('student passed into dom is ', student);
-    var name = $('<td>').html(student.name);
-    var grade = $('<td>').html(student.grade);
-    var course = $('<td>').html(student.course);
+    var name = $('<td>').html(student.name);  // dynamically creating student name in table
+    var grade = $('<td>').html(student.grade);  // dynamically creating student grade in table
+    var course = $('<td>').html(student.course);  // dynamically creating student course in table
     var mButton = $('<button>').html('modify').addClass('modifyStudent'); // dynamically creates modify button
     var modifyStudent = $('<td>').append(mButton);  //appends button to the table
     var dButton = $('<button>').html('delete').addClass('deleteStudent');  //dynamically creates delete student button
@@ -120,9 +117,9 @@ function addStudentToDOM(student) {  // dynamically creates table data, w jquery
 
 function deleteStudent(student) {
     console.log('student.id is', student.id);
-    var child = studentRef.child(student.id);
+    var child = studentRef.child(student.id);  // finding specific child in students node in firebase
     console.log('child within deleteStudent is ', child);
-    child.remove();
+    child.remove();  // removes specified child
     for (var i = 0; i < studentArray.length; i++) {  //runs through student array
         if (student.id === studentArray[i].id) {  // checks if student.id is of equal value and equal type to the id of studentArray at index i
             studentArray.splice(i, 1);  // splices (removes) one item at index i
@@ -167,7 +164,7 @@ function loadData() {
         var rawData = snapshot.val(); // rawData is equal to the value of snapshot
         rawData.id = snapshot.key(); //  id in rawData is equal to the key in snapshot
         studentArray.push(rawData);  // push value of snapshot to studentArray
-        addStudentToDOM(rawData);
+        addStudentToDOM(rawData);  // adds database data to DOM
         console.log(studentArray);
     });
 
