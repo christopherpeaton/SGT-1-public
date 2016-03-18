@@ -41,16 +41,21 @@ function addStudent() {
     student['grade'] = $('#studentGrade').val(); // selects value of input from id studentGrade and assigns it to student.grade
     student['course'] = $('#courseName').val();  // selects value of input from id courseName and assigns it to student.course
     student['id'] = acc;  // this accumulator variable assigns a number to student.id
+    console.log('student["id"] in addStudent is ', student['id'] );
     acc++;  // increases with every student
     if (!validateFormInputs(student)) { // checks to see if validateFormInputs with parameter of student is true or false
         studentRef.push(student); // pushes new student information to database
         studentRef.on('child_added', function(snapshot){ // database is listening for child added, runs anon function with parameter snapshot
-            student['id'] = snapshot.key(); //  set id of student equal to firebase id
+            student['id'] = snapshot.val(); //  set id of student equal to firebase id
+
         });
+        console.log('student.id in validateFormInputs is ', student.id);
         studentArray.push(student);  //  push new student to the student array
         calculateAverage();  // run calculate average function
     }
+    console.log('student.id in add student is', student.id);
 }
+
 //checks sub functions
 function validateFormInputs(student) {
     if (validateName(student) || validateCourse(student) || validateGrade(student)) {
@@ -165,7 +170,7 @@ function loadData() {
         rawData.id = snapshot.key(); //  id in rawData is equal to the key in snapshot
         studentArray.push(rawData);  // push value of snapshot to studentArray
         addStudentToDOM(rawData);  // adds database data to DOM
-        console.log(studentArray);
+        console.log('student array in loadData is ', studentArray);
     });
 
 }
